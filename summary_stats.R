@@ -12,9 +12,13 @@ library(vtable)
 
 ##################
 
+
+###########Make a single database for summary stats
 dichotomous=read.csv(paste0(path_data,"dichotomous.csv"))
 dicho$type="2Dichotomous Choice"
 dicho=dicho%>%filter( Q2 %in%c(1,3,4) )
+
+###keep only people that were either bussing or had no walking question
 dicho=dicho%>%filter((Q2==1&bus_question==0) | bus==1)
 
 
@@ -28,9 +32,10 @@ payment_card$Q5_val=NA
 payment_card$Q8_val=NA
 payment_card$Q13_val=NA
 
+
 merged.survey.j=rbind(dicho,payment_card)
 
-
+#########summary statistics table
 var=c("current_time","new_time","additional.time","bus","log_income","num_kids","young_school_age","age","married","resp_female","child_female")
 labs=c("Walking time to nearby school","Walking time to current school","Additional walking time to nearby school"
                      ,"Bus","Log of income","Married",
@@ -44,10 +49,10 @@ st(merged.survey.j,vars=var,summ=list(c('notNA(x)','min(x)','mean(x)','max(x)','
 
 
 
-
+#### reponses of the payment card
 print(table(payment_card$decision_all))
 
-
+### cross table of the choice for dichotomous choice
 
 print(crosstab(dicho$value_all,dicho$decision_all))
 

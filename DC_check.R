@@ -9,11 +9,12 @@ library(ggplot2)
 
 
 
-################check
+###########We reproduce the dichotomous choice double hurdle regression using payment card data on elementary and junior high schools subset
 
 
 pc_check=read.csv(paste0(path_data,"pc_check.csv"))
 pc_check=pc_check%>%filter( Q2 %in%c(1,3,4) )
+###keep only people that were either bussing or had no walking question
 pc_check=pc_check%>%filter((Q2==1&bus_question==0) | bus==1)
 
 
@@ -30,6 +31,8 @@ reg5=cens_mode_est_dc(value_all~additional.time+additional.time*bus +bus+resp_fe
                    ,~1,pc_check)
 
 
+
+######save to latex
 stargazer(coeftest(reg1),coeftest(reg2),coeftest(reg3),coeftest(reg4),coeftest(reg5),
           
           dep.var.caption = c("DV: Willingness to accept (1,000 JPY)"),

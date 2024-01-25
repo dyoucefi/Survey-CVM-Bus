@@ -4,8 +4,20 @@ library(stargazer)
 library(dplyr)
 library(lmtest)
 library(ggplot2)
+
+
+
+
+
+#######We make the payment card double hurdle regressions on elementary and junior high schools subset
+
+
+
+
+### elementary school 
 elementary_survey=read.csv(paste0(path_data,"payment_card.csv"))
 elementary_survey=elementary_survey%>%filter(UF1==1 & Q2 %in%c(1,3,4) )
+###keep only people that were either bussing or had no walking question
 elementary_survey=elementary_survey%>%filter((Q2==1&bus_question==0) | bus==1)
 
 
@@ -23,11 +35,12 @@ reg5_elem=cens_mode_est_pc(decision_all~additional.time+additional.time*bus +bus
                    ,~1,elementary_survey)
 
 
-
+###########we use the estimates and the variance covariance matrix to make the graphs
 graph_cost(reg4_elem$estimate[2],-inv(reg4_elem$hessian)[2,2],reg4_elem$estimate[11],-inv(reg4_elem$hessian)[11,11],-inv(reg4_elem$hessian)[2,11],"graph_costs_elem")
 
-
+####junior high
 junior_survey=read.csv(paste0(path_data,"payment_card.csv"))
+###keep only people that were either bussing or had no walking question
 junior_survey=junior_survey%>%filter(UF1==2 & Q2 %in%c(1,3,4) )
 junior_survey=junior_survey%>%filter((Q2==1&bus_question==0) | bus==1)
 
@@ -52,14 +65,14 @@ reg5_jun=cens_mode_est_pc(decision_all~additional.time+additional.time*bus +bus+
 
 
 
-
+###########we use the estimates and the variance covariance matrix to make the graphs
 graph_cost(reg4_jun$estimate[2],-inv(reg4_jun$hessian)[2,2],reg4_jun$estimate[11],-inv(reg4_jun$hessian)[11,11],-inv(reg4_jun$hessian)[2,11],"graph_costs_jun")
 
 
 
 
 
-
+########save to latex
 stargazer(coeftest(reg1_elem),coeftest(reg2_elem),coeftest(reg3_elem),coeftest(reg4_elem),coeftest(reg5_elem),coeftest(reg1_jun),coeftest(reg2_jun),coeftest(reg3_jun),coeftest(reg4_jun),coeftest(reg5_jun),
           
           dep.var.caption = c("DV: Willingness to accept (1,000 JPY)"),

@@ -5,11 +5,16 @@ library(stargazer)
 library(dplyr)
 library(lmtest)
 library(ggplot2)
+
+
+##############We make the double hurdle regressions for payment card and dichotomous choice answers
+
+#######Payment Card
 payment_card=read.csv(paste0(path_data,"payment_card.csv"))
 
-
+####keep only walking and bussing
 payment_card=payment_card%>%filter( Q2 %in%c(1,3,4) )
-
+###keep only people that were either bussing or had no walking question
 payment_card=payment_card%>%filter((Q2==1&bus_question==0) | bus==1)
 
 
@@ -24,16 +29,18 @@ reg5_pc=cens_mode_est_pc(decision_all~additional.time+additional.time*bus +bus+r
                      log_income+ married+num_kids+young_school_age+age+child_female+resp_female
                    ,~1,payment_card)
 
+
+###########we use the estimates and the variance covariance matrix to make the graphs
 graph_cost(reg4_pc$estimate[2],-inv(reg4_pc$hessian)[2,2],reg4_pc$estimate[11],-inv(reg4_pc$hessian)[11,11],-inv(reg4_pc$hessian)[2,11],"graph_costs_all")
 
 
-############################### DC
+############################### Dichotomous Choice
 
 dichotomous=read.csv(paste0(path_data,"dichotomous.csv"))
 
 
 dichotomous=dichotomous%>%filter( Q2 %in%c(1,3,4) )
-
+###keep only people that were either bussing or had no walking question
 dichotomous=dichotomous%>%filter((Q2==1&bus_question==0) | bus==1)
 
 
@@ -54,8 +61,13 @@ reg5_dc=cens_mode_est_dc(value_all~additional.time+additional.time*bus +bus+resp
 
 
 
+###########we use the estimates and the variance covariance matrix to make the graphs
+
 graph_cost(reg4_dc$estimate[2],-inv(reg4_dc$hessian)[2,2],reg4_dc$estimate[11],-inv(reg4_dc$hessian)[11,11],-inv(reg4_dc$hessian)[2,11],"graph_costs_dc_all")
 
+
+
+######save to latex 
 
 stargazer(coeftest(reg1_pc),coeftest(reg2_pc),coeftest(reg3_pc),coeftest(reg4_pc),coeftest(reg5_pc),coeftest(reg1_dc),coeftest(reg2_dc),coeftest(reg3_dc),coeftest(reg4_dc),coeftest(reg5_dc),
           

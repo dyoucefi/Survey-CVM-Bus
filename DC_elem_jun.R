@@ -4,7 +4,18 @@ library(stargazer)
 library(dplyr)
 library(lmtest)
 library(ggplot2)
+
+
+
+
+
+
+#######We make the dichotomous choice double hurdle regressions on elementary and junior high schools subset
+
+
+### elementary school 
 elementary_survey=read.csv(paste0(path_data,"dichotomous.csv"))
+###keep only people that were either bussing or had no walking question
 elementary_survey=elementary_survey%>%filter(UF1==1 & Q2 %in%c(1,3,4) )
 elementary_survey=elementary_survey%>%filter((Q2==1&bus_question==0) | bus==1)
 
@@ -23,12 +34,13 @@ reg5_elem=cens_mode_est_dc(value_all~additional.time+additional.time*bus +bus+re
                       ,~1,elementary_survey)
 
 
-
+###########we use the estimates and the variance covariance matrix to make the graphs
 graph_cost(reg4_elem$estimate[2],-inv(reg4_elem$hessian)[2,2],reg4_elem$estimate[11],-inv(reg4_elem$hessian)[11,11],-inv(reg4_elem$hessian)[2,11],"graph_costs_dc_elem")
 
 
-
+####junior high
 junior_survey=read.csv(paste0(path_data,"dichotomous.csv"))
+###keep only people that were either bussing or had no walking question
 junior_survey=junior_survey%>%filter(UF1==2 & Q2 %in%c(1,3,4) )
 junior_survey=junior_survey%>%filter((Q2==1&bus_question==0) | bus==1)
 
@@ -51,7 +63,7 @@ reg5_jun=cens_mode_est_dc(value_all~additional.time+additional.time*bus +bus+res
 
 
 
-
+###########we use the estimates and the variance covariance matrix to make the graphs
 graph_cost(reg3_jun$estimate[2],-inv(reg3_jun$hessian)[2,2],reg3_jun$estimate[11],-inv(reg3_jun$hessian)[11,11],-inv(reg3_jun$hessian)[2,11],"graph_costs_dc_jun")
 
 
